@@ -188,3 +188,19 @@ def test_attaches_dictionary_definitions():
         definitions[0]["english_definition"]
         == "Having a large build or size and strength."
     )
+
+def test_attaches_primary_dictionary_definition():
+    results = extract_vocabulary_with_context(
+        "밥을 먹었어요."
+    )
+
+    eat = next(
+        item for item in results
+        if item["word"] == "먹다"
+    )
+
+    assert eat["primary_definition"] is not None
+    assert (
+        eat["primary_definition"]["english_word"]
+        == "eat; have; consume; take"
+    )

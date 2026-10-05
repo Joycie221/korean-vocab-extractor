@@ -1,4 +1,7 @@
-from dictionary import lookup_dictionary
+from dictionary import (
+    lookup_dictionary,
+    select_primary_definition,
+)
 
 
 def test_dictionary_finds_hada_adjective():
@@ -50,4 +53,18 @@ def test_dictionary_filters_by_part_of_speech():
     assert all(
         entry["part_of_speech"] == "동사"
         for entry in entries
+    )
+
+def test_selects_common_meokda_definition():
+    entries = lookup_dictionary(
+        "먹다",
+        "Verb"
+    )
+
+    primary_definition = select_primary_definition(entries)
+
+    assert primary_definition is not None
+    assert (
+        primary_definition["english_word"]
+        == "eat; have; consume; take"
     )

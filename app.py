@@ -1,4 +1,7 @@
-from dictionary import lookup_dictionary
+from dictionary import (
+    lookup_dictionary,
+    select_primary_definition,
+)
 from collections import Counter
 from flask import Flask, render_template, request
 from kiwipiepy import Kiwi
@@ -157,15 +160,19 @@ def extract_vocabulary_with_context(text):
                 )
 
                 if word not in results:
+                    definitions = lookup_dictionary(
+                        word,
+                        part_of_speech
+                    )
+
                     results[word] = {
                         "word": word,
                         "part_of_speech": part_of_speech,
                         "frequency": 0,
                         "occurrences": [],
-                        "definitions": lookup_dictionary(
-                            word,
-                            part_of_speech
-                        ),
+                        "definitions": definitions,
+                        "primary_definition":
+                            select_primary_definition(definitions),
                     }
 
                 results[word]["frequency"] += 1
@@ -192,15 +199,19 @@ def extract_vocabulary_with_context(text):
                 )
 
                 if word not in results:
+                    definitions = lookup_dictionary(
+                        word,
+                        part_of_speech
+                    )
+
                     results[word] = {
                         "word": word,
                         "part_of_speech": part_of_speech,
                         "frequency": 0,
                         "occurrences": [],
-                        "definitions": lookup_dictionary(
-                            word,
-                            part_of_speech
-                        ),
+                        "definitions": definitions,
+                        "primary_definition":
+                            select_primary_definition(definitions),
                     }
 
                 results[word]["frequency"] += 1

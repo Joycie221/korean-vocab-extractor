@@ -1,7 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Korean Vocabulary Extractor</title>
@@ -160,6 +163,57 @@
                                     {{ item.frequency }}
                                 </span>
                             </div>
+
+                            {% if item.primary_definition %}
+                                {% set primary_definition = item.primary_definition %}
+
+                                <div class="dictionary-definition">
+                                    {% if primary_definition.english_word %}
+                                        <div class="english-word">
+                                            {{ primary_definition.english_word }}
+                                        </div>
+                                    {% endif %}
+
+                                    {% if primary_definition.english_definition %}
+                                        <div class="english-definition">
+                                            {{ primary_definition.english_definition }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                {% set additional_definitions =
+                                    item.definitions
+                                    | reject("equalto", primary_definition)
+                                    | list
+                                %}
+
+                                {% if additional_definitions %}
+                                    <details class="definition-details">
+                                        <summary class="definition-summary">
+                                            {{ additional_definitions|length }}
+                                            more definition{% if additional_definitions|length != 1 %}s{% endif %}
+                                        </summary>
+
+                                        <div class="additional-definitions">
+                                            {% for definition in additional_definitions %}
+                                                <div class="additional-definition">
+                                                    {% if definition.english_word %}
+                                                        <div class="english-word">
+                                                            {{ definition.english_word }}
+                                                        </div>
+                                                    {% endif %}
+
+                                                    {% if definition.english_definition %}
+                                                        <div class="english-definition">
+                                                            {{ definition.english_definition }}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </details>
+                                {% endif %}
+                            {% endif %}
 
                             <details class="context-details">
                                 <summary class="context-summary">
@@ -372,4 +426,5 @@
         );
     </script>
 </body>
+
 </html>

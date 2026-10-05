@@ -68,3 +68,40 @@ def lookup_dictionary(word, part_of_speech=None):
 
     finally:
         connection.close()
+
+def select_primary_definition(entries):
+    """Choose the most useful primary definition from dictionary entries."""
+
+    if not entries:
+        return None
+
+    # Prefer entries without a numbered homonym distinction.
+    default_entries = [
+        entry
+        for entry in entries
+        if entry["homonym_number"] == 0
+    ]
+
+    if default_entries:
+        return default_entries[0]
+
+    # Otherwise, prefer the homonym that has the most senses.
+    homonym_counts = {}
+
+    for entry in entries:
+        homonym_number = entry["homonym_number"]
+
+        homonym_counts[homonym_number] = (
+            homonym_counts.get(homonym_number, 0) + 1
+        )
+
+    preferred_homonym = max(
+        homonym_counts,
+        key=homonym_counts.get
+    )
+
+    return next(
+        entry
+        for entry in entries
+        if entry["homonym_number"] == preferred_homonym
+    )

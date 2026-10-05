@@ -337,3 +337,96 @@ th {
     cursor: not-allowed;
     opacity: 0.4;
 }
+
+/* Dictionary definitions */
+
+.dictionary-definition {
+    margin: 0 28px;
+    padding: 18px 0 14px;
+    border-top: 1px solid #eeeeee;
+}
+
+.english-word {
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #242424;
+}
+
+.english-definition {
+    margin-top: 5px;
+    max-width: 760px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #666666;
+}
+
+
+/* Additional dictionary senses */
+
+.definition-details {
+    margin: 0 28px 16px;
+}
+
+.definition-summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 7px 11px;
+
+    border-radius: 8px;
+
+    font-size: 0.9rem;
+    font-weight: 600;
+
+    color: #555555;
+    background-color: #f5f5f5;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.definition-summary:hover {
+    background-color: #eeeeee;
+    color: #222222;
+}
+
+.additional-definitions {
+    margin-top: 12px;
+    padding-left: 14px;
+    border-left: 3px solid #e5e5e5;
+}
+
+.additional-definition {
+    padding: 10px 0;
+}
+
+.additional-definition + .additional-definition {
+    border-top: 1px solid #eeeeee;
+}
+
+
+/* Give dictionary and context sections breathing room */
+
+.context-details {
+    margin-top: 4px;
+}
+
+
+/* Small-screen definition spacing */
+
+@media (max-width: 600px) {
+    .dictionary-definition {
+        margin-left: 18px;
+        margin-right: 18px;
+    }
+
+    .definition-details {
+        margin-left: 18px;
+        margin-right: 18px;
+    }
+}
