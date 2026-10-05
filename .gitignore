@@ -216,3 +216,11 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Korean Vocabulary Extractor data
+# Raw NIKL dictionary downloads are large source files
+data/raw/
+
+# Generated local dictionary database
+data/*.db
+data/*.db-journal

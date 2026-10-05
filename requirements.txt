@@ -1,3 +1,4 @@
 kiwipiepy==0.24.0
 pytest
 Flask
+xlrd
