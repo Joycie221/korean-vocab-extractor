@@ -15,52 +15,71 @@
 <body>
 
     <main>
-        <h1>Korean Vocabulary Extractor</h1>
 
-        <p>
-            Paste Korean text below to extract and analyze
-            vocabulary by frequency.
-        </p>
+        <header class="header">
+            <h1>한국어 Vocabulary Extractor</h1>
 
-        <form method="POST">
+            <p class="subtitle">
+                Turn Korean scripts and text into a vocabulary study list.
+            </p>
+        </header>
 
-            <textarea
-                name="korean_text"
-                placeholder="한국어 텍스트를 여기에 입력하세요..."
-                required
-            >{{ user_input }}</textarea>
+        <section class="input-card">
 
-            <button type="submit">
-                Extract Vocabulary
-            </button>
+            <form method="POST">
 
-        </form>
+                <textarea
+                    name="korean_text"
+                    placeholder="한국어 텍스트를 여기에 입력하세요..."
+                    required
+                >{{ user_input }}</textarea>
+
+                <button type="submit">
+                    Extract Vocabulary
+                </button>
+
+            </form>
+
+        </section>
 
         {% if vocab_list %}
 
-            <h2>Extracted Vocabulary</h2>
+            <section class="results-card">
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Vocabulary</th>
-                        <th>Frequency</th>
-                    </tr>
-                </thead>
+                <h2>Extracted Vocabulary</h2>
 
-                <tbody>
+                <table>
 
-                    {% for word, count in vocab_list %}
-
+                    <thead>
                         <tr>
-                            <td>{{ word }}</td>
-                            <td>{{ count }}</td>
+                            <th>Vocabulary</th>
+                            <th>Frequency</th>
                         </tr>
+                    </thead>
 
-                    {% endfor %}
+                    <tbody>
 
-                </tbody>
-            </table>
+                        {% for word, count in vocab_list %}
+
+                            <tr>
+                                <td class="vocab-word">
+                                    {{ word }}
+                                </td>
+
+                                <td>
+                                    <span class="frequency">
+                                        {{ count }}
+                                    </span>
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </section>
 
         {% endif %}
 
