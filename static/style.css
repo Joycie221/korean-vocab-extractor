@@ -237,3 +237,43 @@ th {
     font-size: 0.85rem;
     color: #555;
 }
+
+.filter-section {
+    margin-bottom: 22px;
+}
+
+.filter-label {
+    display: block;
+    margin-bottom: 10px;
+    color: #666;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter-button {
+    width: auto;
+    padding: 8px 14px;
+    border: 1px solid #dddddd;
+    border-radius: 20px;
+    background: #ffffff;
+    color: #555;
+    font-size: 0.9rem;
+    font-weight: normal;
+}
+
+.filter-button:hover {
+    background: #f3f3f3;
+    opacity: 1;
+}
+
+.filter-button.active {
+    background: #202124;
+    border-color: #202124;
+    color: white;
+}

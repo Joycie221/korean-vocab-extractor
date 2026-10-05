@@ -14,7 +14,6 @@
 
 <body>
     <main>
-
         <header class="header">
             <h1>한국어 Vocabulary Extractor</h1>
 
@@ -23,11 +22,8 @@
             </p>
         </header>
 
-
         <section class="input-card">
-
             <form method="POST">
-
                 <textarea
                     name="korean_text"
                     placeholder="한국어 텍스트를 여기에 입력하세요..."
@@ -37,20 +33,14 @@
                 <button type="submit">
                     Extract Vocabulary
                 </button>
-
             </form>
-
         </section>
 
-
         {% if vocab_list %}
-
             <section class="results-card">
 
                 {% if statistics %}
-
                     <div class="statistics">
-
                         <div class="statistic">
                             <span class="stat-number">
                                 {{ statistics.unique_words }}
@@ -70,37 +60,53 @@
                                 Total Occurrences
                             </span>
                         </div>
-
                     </div>
 
-
                     <div class="pos-summary">
-
                         {% for part_of_speech, count in statistics.parts_of_speech.items() %}
-
                             <span class="pos-stat">
                                 {{ count }}
                                 {{ part_of_speech }}{% if count != 1 %}s{% endif %}
                             </span>
-
                         {% endfor %}
-
                     </div>
-
                 {% endif %}
-
 
                 <h2>Extracted Vocabulary</h2>
 
+                <div class="filter-section">
+                    <span class="filter-label">
+                        Filter by part of speech:
+                    </span>
+
+                    <div class="filter-buttons">
+                        <button
+                            type="button"
+                            class="filter-button active"
+                            data-filter="All"
+                        >
+                            All
+                        </button>
+
+                        {% for part_of_speech in statistics.parts_of_speech %}
+                            <button
+                                type="button"
+                                class="filter-button"
+                                data-filter="{{ part_of_speech }}"
+                            >
+                                {{ part_of_speech }}
+                            </button>
+                        {% endfor %}
+                    </div>
+                </div>
 
                 <div class="vocabulary-list">
-
                     {% for item in vocab_list %}
-
-                        <article class="vocabulary-item">
-
+                        <article
+                            class="vocabulary-item"
+                            data-pos="{{ item.part_of_speech }}"
+                        >
                             <div class="vocabulary-header">
-
                                 <span class="vocab-word">
                                     {{ item.word }}
                                 </span>
@@ -112,24 +118,17 @@
                                 <span class="frequency">
                                     {{ item.frequency }}
                                 </span>
-
                             </div>
 
-
                             <details class="context-details">
-
                                 <summary class="context-summary">
                                     {{ item.frequency }}
                                     occurrence{% if item.frequency != 1 %}s{% endif %}
                                 </summary>
 
-
                                 <div class="occurrences">
-
                                     {% for occurrence in item.occurrences %}
-
                                         <div class="occurrence">
-
                                             <div class="surface-form">
                                                 {{ occurrence.surface_form }}
                                             </div>
@@ -137,25 +136,47 @@
                                             <div class="context-sentence">
                                                 {{ occurrence.sentence }}
                                             </div>
-
                                         </div>
-
                                     {% endfor %}
-
                                 </div>
-
                             </details>
-
                         </article>
-
                     {% endfor %}
-
                 </div>
-
             </section>
-
         {% endif %}
-
     </main>
+
+    <script>
+        const filterButtons =
+            document.querySelectorAll(".filter-button");
+
+        const vocabularyItems =
+            document.querySelectorAll(".vocabulary-item");
+
+        filterButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const selectedPartOfSpeech =
+                    button.dataset.filter;
+
+                filterButtons.forEach((otherButton) => {
+                    otherButton.classList.remove("active");
+                });
+
+                button.classList.add("active");
+
+                vocabularyItems.forEach((item) => {
+                    const itemPartOfSpeech =
+                        item.dataset.pos;
+
+                    const shouldShow =
+                        selectedPartOfSpeech === "All" ||
+                        itemPartOfSpeech === selectedPartOfSpeech;
+
+                    item.hidden = !shouldShow;
+                });
+            });
+        });
+    </script>
 </body>
 </html>
