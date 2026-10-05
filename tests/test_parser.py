@@ -76,3 +76,55 @@ def test_assigns_part_of_speech():
     assert results["먹다"]["part_of_speech"] == "Verb"
     assert results["열심히"]["part_of_speech"] == "Adverb"
     assert results["공부하다"]["part_of_speech"] == "Verb"
+
+def test_tracks_sentence_context():
+    from app import extract_vocabulary_with_context
+
+    results = extract_vocabulary_with_context(
+        "저는 한국어를 공부해요. "
+        "어제도 공부했어요. "
+        "오늘도 공부하고 있어요."
+    )
+
+    study = next(
+        item for item in results
+        if item["word"] == "공부하다"
+    )
+
+    assert study["frequency"] == 3
+
+    assert len(study["occurrences"]) == 3
+
+    assert study["occurrences"][0]["sentence"] == \
+        "저는 한국어를 공부해요."
+
+    assert study["occurrences"][1]["sentence"] == \
+        "어제도 공부했어요."
+
+    assert study["occurrences"][2]["sentence"] == \
+        "오늘도 공부하고 있어요."
+
+def test_tracks_original_surface_forms():
+    from app import extract_vocabulary_with_context
+
+    results = extract_vocabulary_with_context(
+        "저는 한국어를 공부해요. "
+        "어제도 공부했어요. "
+        "오늘도 공부하고 있어요."
+    )
+
+    study = next(
+        item for item in results
+        if item["word"] == "공부하다"
+    )
+
+    surface_forms = [
+        occurrence["surface_form"]
+        for occurrence in study["occurrences"]
+    ]
+
+    assert surface_forms == [
+        "공부해요",
+        "공부했어요",
+        "공부하고",
+    ]

@@ -61,7 +61,7 @@ def extract_vocabulary(text):
         if token.tag in VOCABULARY_TAGS:
             word = to_dictionary_form(token.form, token.tag)
             pos = POS_LABELS[token.tag]
-            
+
             vocabulary.append((word, pos))
 
         index += 1
@@ -69,6 +69,95 @@ def extract_vocabulary(text):
     frequencies = Counter(vocabulary)
 
     return frequencies.most_common()
+
+def get_surface_form(sentence_text, token):
+    """Return the original whitespace-delimited form containing a token."""
+
+    start = token.start
+    end = start
+
+    while start > 0 and not sentence_text[start - 1].isspace():
+        start -= 1
+
+    while end < len(sentence_text) and not sentence_text[end].isspace():
+        end += 1
+
+    surface_form = sentence_text[start:end]
+
+    return surface_form.rstrip(".,!?…“”‘’")
+
+def extract_vocabulary_with_context(text):
+    """Extract vocabulary with original forms and sentence context."""
+
+    results = {}
+
+    sentences = kiwi.split_into_sents(text)
+
+    for sentence in sentences:
+        sentence_text = sentence.text
+        tokens = kiwi.tokenize(sentence_text)
+
+        index = 0
+
+        while index < len(tokens):
+            token = tokens[index]
+
+            # Reconstruct 하다 verbs:
+            # 공부/NNG + 하/XSV -> 공부하다
+            if (
+                token.tag == "NNG"
+                and index + 1 < len(tokens)
+                and tokens[index + 1].tag == "XSV"
+                and tokens[index + 1].form == "하"
+            ):
+                word = token.form + "하다"
+                part_of_speech = "Verb"
+
+                # Reconstruct the form as it appeared in the sentence.
+                surface_form = get_surface_form(sentence_text, token)
+
+                if word not in results:
+                    results[word] = {
+                        "word": word,
+                        "part_of_speech": part_of_speech,
+                        "frequency": 0,
+                        "occurrences": [],
+                    }
+
+                results[word]["frequency"] += 1
+                results[word]["occurrences"].append({
+                    "surface_form": surface_form,
+                    "sentence": sentence_text,
+                })
+
+                index += 2
+                continue
+
+            if token.tag in VOCABULARY_TAGS:
+                word = to_dictionary_form(token.form, token.tag)
+                part_of_speech = POS_LABELS[token.tag]
+
+                if word not in results:
+                    results[word] = {
+                        "word": word,
+                        "part_of_speech": part_of_speech,
+                        "frequency": 0,
+                        "occurrences": [],
+                    }
+
+                results[word]["frequency"] += 1
+                results[word]["occurrences"].append({
+                    "surface_form": token.form,
+                    "sentence": sentence_text,
+                })
+
+            index += 1
+
+    return sorted(
+        results.values(),
+        key=lambda item: item["frequency"],
+        reverse=True
+    )
 
 @app.route("/", methods=["GET", "POST"])
 def index():
