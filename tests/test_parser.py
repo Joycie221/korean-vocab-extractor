@@ -1,4 +1,8 @@
-from app import extract_vocabulary
+from app import (
+    extract_vocabulary,
+    extract_vocabulary_with_context,
+    calculate_statistics,
+)
 
 
 def vocabulary_as_dict(text):
@@ -44,6 +48,7 @@ def test_extracts_adverb():
 
     assert "열심히" in results
 
+
 def test_reconstructs_hada_verb():
     examples = [
         "한국어를 공부해요.",
@@ -58,6 +63,7 @@ def test_reconstructs_hada_verb():
         assert "공부하다" in results
         assert "공부" not in results
 
+
 def test_counts_hada_forms_together():
     results = vocabulary_as_dict(
         "저는 한국어를 공부해요. "
@@ -66,6 +72,7 @@ def test_counts_hada_forms_together():
     )
 
     assert results["공부하다"]["frequency"] == 3
+
 
 def test_assigns_part_of_speech():
     results = vocabulary_as_dict(
@@ -77,9 +84,8 @@ def test_assigns_part_of_speech():
     assert results["열심히"]["part_of_speech"] == "Adverb"
     assert results["공부하다"]["part_of_speech"] == "Verb"
 
-def test_tracks_sentence_context():
-    from app import extract_vocabulary_with_context
 
+def test_tracks_sentence_context():
     results = extract_vocabulary_with_context(
         "저는 한국어를 공부해요. "
         "어제도 공부했어요. "
@@ -92,7 +98,6 @@ def test_tracks_sentence_context():
     )
 
     assert study["frequency"] == 3
-
     assert len(study["occurrences"]) == 3
 
     assert study["occurrences"][0]["sentence"] == \
@@ -104,9 +109,8 @@ def test_tracks_sentence_context():
     assert study["occurrences"][2]["sentence"] == \
         "오늘도 공부하고 있어요."
 
-def test_tracks_original_surface_forms():
-    from app import extract_vocabulary_with_context
 
+def test_tracks_original_surface_forms():
     results = extract_vocabulary_with_context(
         "저는 한국어를 공부해요. "
         "어제도 공부했어요. "
@@ -128,3 +132,21 @@ def test_tracks_original_surface_forms():
         "공부했어요",
         "공부하고",
     ]
+
+
+def test_calculates_vocabulary_statistics():
+    vocab_list = extract_vocabulary_with_context(
+        "저는 한국어를 공부해요. "
+        "어제도 공부했어요. "
+        "오늘도 공부하고 있어요."
+    )
+
+    statistics = calculate_statistics(vocab_list)
+
+    assert statistics["unique_words"] == 5
+    assert statistics["total_occurrences"] == 7
+
+    assert statistics["parts_of_speech"]["Verb"] == 1
+    assert statistics["parts_of_speech"]["Pronoun"] == 1
+    assert statistics["parts_of_speech"]["Proper Noun"] == 1
+    assert statistics["parts_of_speech"]["Noun"] == 2

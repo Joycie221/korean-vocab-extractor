@@ -159,9 +159,31 @@ def extract_vocabulary_with_context(text):
         reverse=True
     )
 
+def calculate_statistics(vocab_list):
+    """Calculate summary statistics for extracted vocabulary."""
+
+    total_unique = len(vocab_list)
+
+    total_occurrences = sum(
+        item["frequency"]
+        for item in vocab_list
+    )
+
+    parts_of_speech = Counter(
+        item["part_of_speech"]
+        for item in vocab_list
+    )
+
+    return {
+        "unique_words": total_unique,
+        "total_occurrences": total_occurrences,
+        "parts_of_speech": dict(parts_of_speech),
+    }
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     vocab_list = []
+    statistics = None
     user_input = ""
 
     if request.method == "POST":
@@ -169,11 +191,13 @@ def index():
 
         if user_input.strip():
             vocab_list = extract_vocabulary_with_context(user_input)
+            statistics = calculate_statistics(vocab_list)
 
     return render_template(
         "index.html",
         vocab_list=vocab_list,
-        user_input=user_input
+        statistics=statistics,
+        user_input=user_input,
     )
 
 if __name__ == "__main__":

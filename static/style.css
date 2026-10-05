@@ -193,3 +193,47 @@ th {
 .context-details .occurrence:last-child {
     border-bottom: none;
 }
+
+.statistics {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.statistic {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: #fafafa;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+}
+
+.stat-number {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.stat-label {
+    margin-top: 4px;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.pos-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+}
+
+.pos-stat {
+    padding: 6px 10px;
+    background: #eeeeee;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #555;
+}

@@ -47,7 +47,51 @@
 
             <section class="results-card">
 
+                {% if statistics %}
+
+                    <div class="statistics">
+
+                        <div class="statistic">
+                            <span class="stat-number">
+                                {{ statistics.unique_words }}
+                            </span>
+
+                            <span class="stat-label">
+                                Unique Words
+                            </span>
+                        </div>
+
+                        <div class="statistic">
+                            <span class="stat-number">
+                                {{ statistics.total_occurrences }}
+                            </span>
+
+                            <span class="stat-label">
+                                Total Occurrences
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="pos-summary">
+
+                        {% for part_of_speech, count in statistics.parts_of_speech.items() %}
+
+                            <span class="pos-stat">
+                                {{ count }}
+                                {{ part_of_speech }}{% if count != 1 %}s{% endif %}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+
                 <h2>Extracted Vocabulary</h2>
+
 
                 <div class="vocabulary-list">
 
