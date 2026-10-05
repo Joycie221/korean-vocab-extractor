@@ -277,3 +277,39 @@ th {
     border-color: #202124;
     color: white;
 }
+
+.vocabulary-controls {
+    margin-bottom: 22px;
+}
+
+.search-section {
+    margin-bottom: 18px;
+}
+
+.vocabulary-search {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #202124;
+    font-size: 1rem;
+}
+
+.vocabulary-search:focus {
+    outline: none;
+    border-color: #555;
+}
+
+.filter-section {
+    margin-bottom: 0;
+}
+
+.no-results-message {
+    padding: 18px;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    background: #fafafa;
+    color: #666;
+    text-align: center;
+}

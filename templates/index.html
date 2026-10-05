@@ -74,37 +74,67 @@
 
                 <h2>Extracted Vocabulary</h2>
 
-                <div class="filter-section">
-                    <span class="filter-label">
-                        Filter by part of speech:
-                    </span>
+                <div class="vocabulary-controls">
 
-                    <div class="filter-buttons">
-                        <button
-                            type="button"
-                            class="filter-button active"
-                            data-filter="All"
+                    <div class="search-section">
+                        <label
+                            for="vocabulary-search"
+                            class="filter-label"
                         >
-                            All
-                        </button>
+                            Search vocabulary:
+                        </label>
 
-                        {% for part_of_speech in statistics.parts_of_speech %}
+                        <input
+                            type="search"
+                            id="vocabulary-search"
+                            class="vocabulary-search"
+                            placeholder="Search for a word..."
+                            autocomplete="off"
+                        >
+                    </div>
+
+                    <div class="filter-section">
+                        <span class="filter-label">
+                            Filter by part of speech:
+                        </span>
+
+                        <div class="filter-buttons">
                             <button
                                 type="button"
-                                class="filter-button"
-                                data-filter="{{ part_of_speech }}"
+                                class="filter-button active"
+                                data-filter="All"
                             >
-                                {{ part_of_speech }}
+                                All
                             </button>
-                        {% endfor %}
+
+                            {% for part_of_speech in statistics.parts_of_speech %}
+                                <button
+                                    type="button"
+                                    class="filter-button"
+                                    data-filter="{{ part_of_speech }}"
+                                >
+                                    {{ part_of_speech }}
+                                </button>
+                            {% endfor %}
+                        </div>
                     </div>
+
                 </div>
+
+                <p
+                    id="no-results-message"
+                    class="no-results-message"
+                    hidden
+                >
+                    No vocabulary matches your search.
+                </p>
 
                 <div class="vocabulary-list">
                     {% for item in vocab_list %}
                         <article
                             class="vocabulary-item"
                             data-pos="{{ item.part_of_speech }}"
+                            data-word="{{ item.word }}"
                         >
                             <div class="vocabulary-header">
                                 <span class="vocab-word">
@@ -154,9 +184,51 @@
         const vocabularyItems =
             document.querySelectorAll(".vocabulary-item");
 
+        const searchInput =
+            document.querySelector("#vocabulary-search");
+
+        const noResultsMessage =
+            document.querySelector("#no-results-message");
+
+        let selectedPartOfSpeech = "All";
+
+        function updateVocabularyDisplay() {
+            const searchTerm =
+                searchInput.value.trim().toLowerCase();
+
+            let visibleItems = 0;
+
+            vocabularyItems.forEach((item) => {
+                const itemPartOfSpeech =
+                    item.dataset.pos;
+
+                const itemWord =
+                    item.dataset.word.toLowerCase();
+
+                const matchesPartOfSpeech =
+                    selectedPartOfSpeech === "All" ||
+                    itemPartOfSpeech === selectedPartOfSpeech;
+
+                const matchesSearch =
+                    itemWord.includes(searchTerm);
+
+                const shouldShow =
+                    matchesPartOfSpeech && matchesSearch;
+
+                item.hidden = !shouldShow;
+
+                if (shouldShow) {
+                    visibleItems += 1;
+                }
+            });
+
+            noResultsMessage.hidden =
+                visibleItems !== 0;
+        }
+
         filterButtons.forEach((button) => {
             button.addEventListener("click", () => {
-                const selectedPartOfSpeech =
+                selectedPartOfSpeech =
                     button.dataset.filter;
 
                 filterButtons.forEach((otherButton) => {
@@ -165,18 +237,14 @@
 
                 button.classList.add("active");
 
-                vocabularyItems.forEach((item) => {
-                    const itemPartOfSpeech =
-                        item.dataset.pos;
-
-                    const shouldShow =
-                        selectedPartOfSpeech === "All" ||
-                        itemPartOfSpeech === selectedPartOfSpeech;
-
-                    item.hidden = !shouldShow;
-                });
+                updateVocabularyDisplay();
             });
         });
+
+        searchInput.addEventListener(
+            "input",
+            updateVocabularyDisplay
+        );
     </script>
 </body>
 </html>
