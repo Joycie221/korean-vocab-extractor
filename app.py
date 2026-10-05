@@ -1,10 +1,25 @@
+import string
 from collections import Counter
+
+
+def clean_text(text):
+    """Remove punctuation from Korean text before tokenization."""
+
+    punctuation = string.punctuation + "…“”‘’"
+
+    cleaned_text = "".join(
+        character for character in text
+        if character not in punctuation
+    )
+
+    return cleaned_text
 
 
 def extract_vocabulary(text):
     """Extract vocabulary tokens from Korean text and count their frequency."""
 
-    words = text.split()
+    cleaned_text = clean_text(text)
+    words = cleaned_text.split()
     frequencies = Counter(words)
 
     return frequencies
