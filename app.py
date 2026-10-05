@@ -41,12 +41,13 @@ def extract_vocabulary(text):
     return frequencies.most_common()
 
 
-sample_text = """
-친구가 학교에서 밥을 먹었어요.
-저는 한국어를 열심히 공부하고 있어요.
-"""
+if __name__ == "__main__":
+    sample_text = """
+    친구가 학교에서 밥을 먹었어요.
+    저는 한국어를 열심히 공부하고 있어요.
+    """
 
-results = extract_vocabulary(sample_text)
+    results = extract_vocabulary(sample_text)
 
-for word, count in results:
-    print(f"{word}: {count}")
+    for word, count in results:
+        print(f"{word}: {count}")
