@@ -34,35 +34,77 @@ POS_LABELS = {
     "MAG": "Adverb",
 }
 
+def reconstruct_derived_word(tokens, index):
+    """Reconstruct Korean words formed with derivational suffixes."""
+
+    token = tokens[index]
+
+    if index + 1 >= len(tokens):
+        return None
+
+    next_token = tokens[index + 1]
+
+    # Noun + verbal derivational suffix
+    # 공부 + 하 -> 공부하다
+    # 상속 + 되 -> 상속되다
+    if token.tag == "NNG" and next_token.tag == "XSV":
+        return {
+            "word": token.form + next_token.form + "다",
+            "part_of_speech": "Verb",
+        }
+
+    # Root + adjectival derivational suffix
+    # 우람 + 하 -> 우람하다
+    if token.tag == "XR" and next_token.tag == "XSA":
+        return {
+            "word": token.form + next_token.form + "다",
+            "part_of_speech": "Adjective",
+        }
+
+    return None
+
 
 def extract_vocabulary(text):
     """Analyze Korean text and count vocabulary-bearing morphemes."""
 
     tokens = kiwi.tokenize(text)
-
     vocabulary = []
     index = 0
 
     while index < len(tokens):
         token = tokens[index]
 
-        # Reconstruct 하다 verbs such as 공부하다:
-        # 공부/NNG + 하/XSV -> 공부하다
-        if (
-            token.tag == "NNG"
-            and index + 1 < len(tokens)
-            and tokens[index + 1].tag == "XSV"
-            and tokens[index + 1].form == "하"
-        ):
-            vocabulary.append((token.form + "하다", "Verb"))
+        # Reconstruct words formed with derivational suffixes.
+        # Examples:
+        # 공부 + 하/XSV -> 공부하다 (Verb)
+        # 상속 + 되/XSV -> 상속되다 (Verb)
+        # 우람 + 하/XSA -> 우람하다 (Adjective)
+        derived_word = reconstruct_derived_word(tokens, index)
+
+        if derived_word:
+            vocabulary.append(
+                (
+                    derived_word["word"],
+                    derived_word["part_of_speech"],
+                )
+            )
+
+            # Skip the root and derivational suffix because
+            # they have already been combined into one word.
             index += 2
             continue
 
+        # Handle ordinary vocabulary tokens.
         if token.tag in VOCABULARY_TAGS:
             word = to_dictionary_form(token.form, token.tag)
-            pos = POS_LABELS[token.tag]
+            part_of_speech = POS_LABELS[token.tag]
 
-            vocabulary.append((word, pos))
+            vocabulary.append(
+                (
+                    word,
+                    part_of_speech,
+                )
+            )
 
         index += 1
 
@@ -102,19 +144,23 @@ def extract_vocabulary_with_context(text):
         while index < len(tokens):
             token = tokens[index]
 
-            # Reconstruct 하다 verbs:
-            # 공부/NNG + 하/XSV -> 공부하다
-            if (
-                token.tag == "NNG"
-                and index + 1 < len(tokens)
-                and tokens[index + 1].tag == "XSV"
-                and tokens[index + 1].form == "하"
-            ):
-                word = token.form + "하다"
-                part_of_speech = "Verb"
+            # Reconstruct words formed with derivational suffixes.
+            # Examples:
+            # 공부 + 하/XSV -> 공부하다 (Verb)
+            # 상속 + 되/XSV -> 상속되다 (Verb)
+            # 우람 + 하/XSA -> 우람하다 (Adjective)
+            derived_word = reconstruct_derived_word(tokens, index)
 
-                # Reconstruct the form as it appeared in the sentence.
-                surface_form = get_surface_form(sentence_text, token)
+            if derived_word:
+                word = derived_word["word"]
+                part_of_speech = derived_word["part_of_speech"]
+
+                # Preserve the form exactly as it appeared
+                # in the original sentence.
+                surface_form = get_surface_form(
+                    sentence_text,
+                    token
+                )
 
                 if word not in results:
                     results[word] = {
@@ -125,17 +171,30 @@ def extract_vocabulary_with_context(text):
                     }
 
                 results[word]["frequency"] += 1
+
                 results[word]["occurrences"].append({
                     "surface_form": surface_form,
                     "sentence": sentence_text,
                 })
 
+                # Skip both pieces because they have already
+                # been reconstructed into one vocabulary item.
                 index += 2
                 continue
 
+            # Handle ordinary vocabulary tokens.
             if token.tag in VOCABULARY_TAGS:
-                word = to_dictionary_form(token.form, token.tag)
+                word = to_dictionary_form(
+                    token.form,
+                    token.tag
+                )
+
                 part_of_speech = POS_LABELS[token.tag]
+
+                surface_form = get_surface_form(
+                    sentence_text,
+                    token
+                )
 
                 if word not in results:
                     results[word] = {
@@ -146,8 +205,9 @@ def extract_vocabulary_with_context(text):
                     }
 
                 results[word]["frequency"] += 1
+
                 results[word]["occurrences"].append({
-                    "surface_form": token.form,
+                    "surface_form": surface_form,
                     "sentence": sentence_text,
                 })
 

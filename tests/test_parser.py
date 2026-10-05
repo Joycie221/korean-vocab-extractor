@@ -150,3 +150,22 @@ def test_calculates_vocabulary_statistics():
     assert statistics["parts_of_speech"]["Pronoun"] == 1
     assert statistics["parts_of_speech"]["Proper Noun"] == 1
     assert statistics["parts_of_speech"]["Noun"] == 2
+
+def test_reconstructs_doeda_verb():
+    results = vocabulary_as_dict(
+        "재산이 남편에게 상속될 예정이었다."
+    )
+
+    assert "상속되다" in results
+    assert "상속" not in results
+    assert results["상속되다"]["part_of_speech"] == "Verb"
+
+
+def test_reconstructs_hada_adjective():
+    results = vocabulary_as_dict(
+        "어깨가 우람했다."
+    )
+
+    assert "우람하다" in results
+    assert "우람" not in results
+    assert results["우람하다"]["part_of_speech"] == "Adjective"
