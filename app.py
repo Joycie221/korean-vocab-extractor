@@ -1,36 +1,49 @@
-import string
 from collections import Counter
+from kiwipiepy import Kiwi
 
 
-def clean_text(text):
-    """Remove punctuation from Korean text before tokenization."""
+kiwi = Kiwi()
 
-    punctuation = string.punctuation + "…“”‘’"
 
-    cleaned_text = "".join(
-        character for character in text
-        if character not in punctuation
-    )
+VOCABULARY_TAGS = {
+    "NNG",  # General noun
+    "NNP",  # Proper noun
+    "NP",   # Pronoun
+    "VV",   # Verb
+    "VA",   # Adjective
+    "MAG",  # General adverb
+}
 
-    return cleaned_text
+
+def to_dictionary_form(form, tag):
+    """Convert verb and adjective stems to a basic dictionary-style form."""
+
+    if tag in {"VV", "VA"}:
+        return form + "다"
+
+    return form
 
 
 def extract_vocabulary(text):
-    """Extract vocabulary tokens and rank them by frequency."""
+    """Analyze Korean text and count vocabulary-bearing morphemes."""
 
-    cleaned_text = clean_text(text)
-    words = cleaned_text.split()
-    frequencies = Counter(words)
+    tokens = kiwi.tokenize(text)
+
+    vocabulary = []
+
+    for token in tokens:
+        if token.tag in VOCABULARY_TAGS:
+            word = to_dictionary_form(token.form, token.tag)
+            vocabulary.append(word)
+
+    frequencies = Counter(vocabulary)
 
     return frequencies.most_common()
 
 
 sample_text = """
-이즈쿠는 영웅이다.
-이즈쿠는 학생이다.
-나는 이즈쿠를 좋아한다.
-카츠키는 이즈쿠를 본다.
-이즈쿠는 좋은 영웅이다.
+친구가 학교에서 밥을 먹었어요.
+저는 한국어를 열심히 공부하고 있어요.
 """
 
 results = extract_vocabulary(sample_text)
