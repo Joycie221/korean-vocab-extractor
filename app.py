@@ -168,7 +168,7 @@ def index():
         user_input = request.form.get("korean_text", "")
 
         if user_input.strip():
-            vocab_list = extract_vocabulary(user_input)
+            vocab_list = extract_vocabulary_with_context(user_input)
 
     return render_template(
         "index.html",

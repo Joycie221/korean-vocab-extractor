@@ -13,16 +13,16 @@
 </head>
 
 <body>
-
     <main>
 
         <header class="header">
             <h1>한국어 Vocabulary Extractor</h1>
 
             <p class="subtitle">
-                Turn Korean scripts and text into a vocabulary study list.
+                Turn Korean text into a contextualized vocabulary study list.
             </p>
         </header>
+
 
         <section class="input-card">
 
@@ -42,47 +42,66 @@
 
         </section>
 
+
         {% if vocab_list %}
 
             <section class="results-card">
 
                 <h2>Extracted Vocabulary</h2>
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Vocabulary</th>
-                            <th>Part of Speech</th>
-                            <th>Frequency</th>
-                        </tr>
-                    </thead>
+                <div class="vocabulary-list">
 
-                    <tbody>
-                        {% for (word, part_of_speech), count in vocab_list %}
-                            <tr>
-                                <td class="vocab-word">
-                                    {{ word }}
-                                </td>
+                    {% for item in vocab_list %}
 
-                                <td class="part-of-speech">
-                                    {{ part_of_speech }}
-                                </td>
+                        <article class="vocabulary-item">
 
-                                <td>
-                                    <span class="frequency">
-                                        {{ count }}
-                                    </span>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                            <div class="vocabulary-header">
+
+                                <span class="vocab-word">
+                                    {{ item.word }}
+                                </span>
+
+                                <span class="part-of-speech">
+                                    {{ item.part_of_speech }}
+                                </span>
+
+                                <span class="frequency">
+                                    {{ item.frequency }}
+                                </span>
+
+                            </div>
+
+
+                            <div class="occurrences">
+
+                                {% for occurrence in item.occurrences %}
+
+                                    <div class="occurrence">
+
+                                        <div class="surface-form">
+                                            {{ occurrence.surface_form }}
+                                        </div>
+
+                                        <div class="context-sentence">
+                                            {{ occurrence.sentence }}
+                                        </div>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
 
             </section>
 
         {% endif %}
 
     </main>
-
 </body>
 </html>

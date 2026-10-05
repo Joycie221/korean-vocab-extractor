@@ -110,3 +110,52 @@ th {
     text-align: center;
     font-weight: bold;
 }
+
+.vocabulary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.vocabulary-item {
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.vocabulary-header {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 18px;
+    background: #fafafa;
+}
+
+.part-of-speech {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.occurrences {
+    padding: 0 18px;
+}
+
+.occurrence {
+    padding: 14px 0;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.occurrence:last-child {
+    border-bottom: none;
+}
+
+.surface-form {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.context-sentence {
+    color: #666;
+    line-height: 1.5;
+}
