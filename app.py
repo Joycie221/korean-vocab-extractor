@@ -1,6 +1,8 @@
 from collections import Counter
+from flask import Flask, render_template, request
 from kiwipiepy import Kiwi
 
+app = Flask(__name__)
 
 kiwi = Kiwi()
 
@@ -57,14 +59,22 @@ def extract_vocabulary(text):
 
     return frequencies.most_common()
 
+@app.route("/", methods=["GET", "POST"])
+def index():
+    vocab_list = []
+    user_input = ""
+
+    if request.method == "POST":
+        user_input = request.form.get("korean_text", "")
+
+        if user_input.strip():
+            vocab_list = extract_vocabulary(user_input)
+
+    return render_template(
+        "index.html",
+        vocab_list=vocab_list,
+        user_input=user_input
+    )
 
 if __name__ == "__main__":
-    sample_text = """
-    친구가 학교에서 밥을 먹었어요.
-    저는 한국어를 열심히 공부하고 있어요.
-    """
-
-    results = extract_vocabulary(sample_text)
-
-    for word, count in results:
-        print(f"{word}: {count}")
+    app.run(debug=True)

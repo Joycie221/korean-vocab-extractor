@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Korean Vocabulary Extractor</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+
+<body>
+
+    <main>
+        <h1>Korean Vocabulary Extractor</h1>
+
+        <p>
+            Paste Korean text below to extract and analyze
+            vocabulary by frequency.
+        </p>
+
+        <form method="POST">
+
+            <textarea
+                name="korean_text"
+                placeholder="한국어 텍스트를 여기에 입력하세요..."
+                required
+            >{{ user_input }}</textarea>
+
+            <button type="submit">
+                Extract Vocabulary
+            </button>
+
+        </form>
+
+        {% if vocab_list %}
+
+            <h2>Extracted Vocabulary</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Vocabulary</th>
+                        <th>Frequency</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for word, count in vocab_list %}
+
+                        <tr>
+                            <td>{{ word }}</td>
+                            <td>{{ count }}</td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+            </table>
+
+        {% endif %}
+
+    </main>
+
+</body>
+</html>
