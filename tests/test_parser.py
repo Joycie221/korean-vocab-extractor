@@ -36,3 +36,26 @@ def test_extracts_adverb():
     results = vocabulary_as_dict("한국어를 열심히 공부해요.")
 
     assert "열심히" in results
+
+def test_reconstructs_hada_verb():
+    examples = [
+        "한국어를 공부해요.",
+        "어제 한국어를 공부했어요.",
+        "매일 한국어를 공부하고 있어요.",
+        "한국어를 공부한다.",
+    ]
+
+    for text in examples:
+        results = vocabulary_as_dict(text)
+
+        assert "공부하다" in results
+        assert "공부" not in results
+
+def test_counts_hada_forms_together():
+    results = vocabulary_as_dict(
+        "저는 한국어를 공부해요. "
+        "어제도 공부했어요. "
+        "오늘도 공부하고 있어요."
+    )
+
+    assert results["공부하다"] == 3

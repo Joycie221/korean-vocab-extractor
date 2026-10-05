@@ -30,11 +30,28 @@ def extract_vocabulary(text):
     tokens = kiwi.tokenize(text)
 
     vocabulary = []
+    index = 0
 
-    for token in tokens:
+    while index < len(tokens):
+        token = tokens[index]
+
+        # Reconstruct 하다 verbs such as 공부하다:
+        # 공부/NNG + 하/XSV -> 공부하다
+        if (
+            token.tag == "NNG"
+            and index + 1 < len(tokens)
+            and tokens[index + 1].tag == "XSV"
+            and tokens[index + 1].form == "하"
+        ):
+            vocabulary.append(token.form + "하다")
+            index += 2
+            continue
+
         if token.tag in VOCABULARY_TAGS:
             word = to_dictionary_form(token.form, token.tag)
             vocabulary.append(word)
+
+        index += 1
 
     frequencies = Counter(vocabulary)
 
