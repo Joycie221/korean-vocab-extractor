@@ -25,6 +25,15 @@ def to_dictionary_form(form, tag):
 
     return form
 
+POS_LABELS = {
+    "NNG": "Noun",
+    "NNP": "Proper Noun",
+    "NP": "Pronoun",
+    "VV": "Verb",
+    "VA": "Adjective",
+    "MAG": "Adverb",
+}
+
 
 def extract_vocabulary(text):
     """Analyze Korean text and count vocabulary-bearing morphemes."""
@@ -45,13 +54,15 @@ def extract_vocabulary(text):
             and tokens[index + 1].tag == "XSV"
             and tokens[index + 1].form == "하"
         ):
-            vocabulary.append(token.form + "하다")
+            vocabulary.append((token.form + "하다", "Verb"))
             index += 2
             continue
 
         if token.tag in VOCABULARY_TAGS:
             word = to_dictionary_form(token.form, token.tag)
-            vocabulary.append(word)
+            pos = POS_LABELS[token.tag]
+            
+            vocabulary.append((word, pos))
 
         index += 1
 

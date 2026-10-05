@@ -2,8 +2,15 @@ from app import extract_vocabulary
 
 
 def vocabulary_as_dict(text):
-    """Convert extractor results to a dictionary for easier testing."""
-    return dict(extract_vocabulary(text))
+    """Convert extractor results to a dictionary keyed by vocabulary word."""
+
+    return {
+        word: {
+            "part_of_speech": part_of_speech,
+            "frequency": count,
+        }
+        for (word, part_of_speech), count in extract_vocabulary(text)
+    }
 
 
 def test_removes_subject_particle():
@@ -16,7 +23,7 @@ def test_removes_subject_particle():
 def test_combines_noun_forms():
     results = vocabulary_as_dict("친구가 친구를 만났어요.")
 
-    assert results["친구"] == 2
+    assert results["친구"]["frequency"] == 2
 
 
 def test_converts_verb_to_dictionary_form():
@@ -58,4 +65,14 @@ def test_counts_hada_forms_together():
         "오늘도 공부하고 있어요."
     )
 
-    assert results["공부하다"] == 3
+    assert results["공부하다"]["frequency"] == 3
+
+def test_assigns_part_of_speech():
+    results = vocabulary_as_dict(
+        "친구가 밥을 먹었어요. 한국어를 열심히 공부해요."
+    )
+
+    assert results["친구"]["part_of_speech"] == "Noun"
+    assert results["먹다"]["part_of_speech"] == "Verb"
+    assert results["열심히"]["part_of_speech"] == "Adverb"
+    assert results["공부하다"]["part_of_speech"] == "Verb"

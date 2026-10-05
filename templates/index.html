@@ -49,21 +49,23 @@
                 <h2>Extracted Vocabulary</h2>
 
                 <table>
-
                     <thead>
                         <tr>
                             <th>Vocabulary</th>
+                            <th>Part of Speech</th>
                             <th>Frequency</th>
                         </tr>
                     </thead>
 
                     <tbody>
-
-                        {% for word, count in vocab_list %}
-
+                        {% for (word, part_of_speech), count in vocab_list %}
                             <tr>
                                 <td class="vocab-word">
                                     {{ word }}
+                                </td>
+
+                                <td class="part-of-speech">
+                                    {{ part_of_speech }}
                                 </td>
 
                                 <td>
@@ -72,11 +74,8 @@
                                     </span>
                                 </td>
                             </tr>
-
                         {% endfor %}
-
                     </tbody>
-
                 </table>
 
             </section>
