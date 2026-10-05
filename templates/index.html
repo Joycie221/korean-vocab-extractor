@@ -72,7 +72,17 @@
                     </div>
                 {% endif %}
 
-                <h2>Extracted Vocabulary</h2>
+                <div class="results-heading">
+                    <h2>Extracted Vocabulary</h2>
+
+                    <button
+                        type="button"
+                        id="export-csv"
+                        class="export-button"
+                    >
+                        Export CSV
+                    </button>
+                </div>
 
                 <div class="vocabulary-controls">
 
@@ -135,6 +145,7 @@
                             class="vocabulary-item"
                             data-pos="{{ item.part_of_speech }}"
                             data-word="{{ item.word }}"
+                            data-frequency="{{ item.frequency }}"
                         >
                             <div class="vocabulary-header">
                                 <span class="vocab-word">
@@ -158,7 +169,11 @@
 
                                 <div class="occurrences">
                                     {% for occurrence in item.occurrences %}
-                                        <div class="occurrence">
+                                        <div
+                                            class="occurrence"
+                                            data-surface-form="{{ occurrence.surface_form }}"
+                                            data-sentence="{{ occurrence.sentence }}"
+                                        >
                                             <div class="surface-form">
                                                 {{ occurrence.surface_form }}
                                             </div>
@@ -190,7 +205,11 @@
         const noResultsMessage =
             document.querySelector("#no-results-message");
 
+        const exportButton =
+            document.querySelector("#export-csv");
+
         let selectedPartOfSpeech = "All";
+
 
         function updateVocabularyDisplay() {
             const searchTerm =
@@ -224,7 +243,106 @@
 
             noResultsMessage.hidden =
                 visibleItems !== 0;
+
+            exportButton.disabled =
+                visibleItems === 0;
         }
+
+
+        function escapeCsvValue(value) {
+            const escapedValue =
+                String(value).replaceAll('"', '""');
+
+            return `"${escapedValue}"`;
+        }
+
+
+        function exportVisibleVocabulary() {
+            const rows = [
+                [
+                    "Vocabulary",
+                    "Part of Speech",
+                    "Frequency",
+                    "Surface Form",
+                    "Context"
+                ]
+            ];
+
+            vocabularyItems.forEach((item) => {
+                if (item.hidden) {
+                    return;
+                }
+
+                const word =
+                    item.dataset.word;
+
+                const partOfSpeech =
+                    item.dataset.pos;
+
+                const frequency =
+                    item.dataset.frequency;
+
+                const occurrences =
+                    item.querySelectorAll(".occurrence");
+
+                occurrences.forEach((occurrence) => {
+                    const surfaceForm =
+                        occurrence.dataset.surfaceForm;
+
+                    const sentence =
+                        occurrence.dataset.sentence;
+
+                    rows.push([
+                        word,
+                        partOfSpeech,
+                        frequency,
+                        surfaceForm,
+                        sentence
+                    ]);
+                });
+            });
+
+            const csvContent =
+                rows
+                    .map((row) =>
+                        row
+                            .map(escapeCsvValue)
+                            .join(",")
+                    )
+                    .join("\n");
+
+            const csvWithBom =
+                "\uFEFF" + csvContent;
+
+            const blob =
+                new Blob(
+                    [csvWithBom],
+                    {
+                        type:
+                            "text/csv;charset=utf-8;"
+                    }
+                );
+
+            const url =
+                URL.createObjectURL(blob);
+
+            const downloadLink =
+                document.createElement("a");
+
+            downloadLink.href = url;
+
+            downloadLink.download =
+                "korean-vocabulary.csv";
+
+            document.body.appendChild(downloadLink);
+
+            downloadLink.click();
+
+            document.body.removeChild(downloadLink);
+
+            URL.revokeObjectURL(url);
+        }
+
 
         filterButtons.forEach((button) => {
             button.addEventListener("click", () => {
@@ -241,9 +359,16 @@
             });
         });
 
+
         searchInput.addEventListener(
             "input",
             updateVocabularyDisplay
+        );
+
+
+        exportButton.addEventListener(
+            "click",
+            exportVisibleVocabulary
         );
     </script>
 </body>

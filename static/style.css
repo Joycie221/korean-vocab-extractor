@@ -313,3 +313,27 @@ th {
     color: #666;
     text-align: center;
 }
+
+.results-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.results-heading h2 {
+    margin: 0;
+}
+
+.export-button {
+    width: auto;
+    padding: 10px 16px;
+    background: #202124;
+    color: white;
+}
+
+.export-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+}
