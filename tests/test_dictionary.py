@@ -42,6 +42,7 @@ def test_dictionary_returns_empty_list_for_unknown_word():
 
     assert entries == []
 
+
 def test_dictionary_filters_by_part_of_speech():
     entries = lookup_dictionary(
         "먹다",
@@ -54,6 +55,7 @@ def test_dictionary_filters_by_part_of_speech():
         entry["part_of_speech"] == "동사"
         for entry in entries
     )
+
 
 def test_selects_common_meokda_definition():
     entries = lookup_dictionary(
