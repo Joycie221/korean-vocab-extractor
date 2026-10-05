@@ -16,22 +16,24 @@ def clean_text(text):
 
 
 def extract_vocabulary(text):
-    """Extract vocabulary tokens from Korean text and count their frequency."""
+    """Extract vocabulary tokens and rank them by frequency."""
 
     cleaned_text = clean_text(text)
     words = cleaned_text.split()
     frequencies = Counter(words)
 
-    return frequencies
+    return frequencies.most_common()
 
 
 sample_text = """
-안녕하세요! 요즘 한국어를 열심히 공부하고 있어요.
-한국 드라마가 정말 재미있어요.
-드라마를 보면서 단어를 공부해요.
+이즈쿠는 영웅이다.
+이즈쿠는 학생이다.
+나는 이즈쿠를 좋아한다.
+카츠키는 이즈쿠를 본다.
+이즈쿠는 좋은 영웅이다.
 """
 
 results = extract_vocabulary(sample_text)
 
-for word, count in results.items():
+for word, count in results:
     print(f"{word}: {count}")
