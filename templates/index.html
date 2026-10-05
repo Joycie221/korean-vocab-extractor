@@ -72,25 +72,35 @@
                             </div>
 
 
-                            <div class="occurrences">
+                            <details class="context-details">
 
-                                {% for occurrence in item.occurrences %}
+                                <summary class="context-summary">
+                                    {{ item.frequency }}
+                                    occurrence{% if item.frequency != 1 %}s{% endif %}
+                                </summary>
 
-                                    <div class="occurrence">
 
-                                        <div class="surface-form">
-                                            {{ occurrence.surface_form }}
+                                <div class="occurrences">
+
+                                    {% for occurrence in item.occurrences %}
+
+                                        <div class="occurrence">
+
+                                            <div class="surface-form">
+                                                {{ occurrence.surface_form }}
+                                            </div>
+
+                                            <div class="context-sentence">
+                                                {{ occurrence.sentence }}
+                                            </div>
+
                                         </div>
 
-                                        <div class="context-sentence">
-                                            {{ occurrence.sentence }}
-                                        </div>
+                                    {% endfor %}
 
-                                    </div>
+                                </div>
 
-                                {% endfor %}
-
-                            </div>
+                            </details>
 
                         </article>
 
