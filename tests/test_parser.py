@@ -169,3 +169,22 @@ def test_reconstructs_hada_adjective():
     assert "우람하다" in results
     assert "우람" not in results
     assert results["우람하다"]["part_of_speech"] == "Adjective"
+
+def test_attaches_dictionary_definitions():
+    results = extract_vocabulary_with_context(
+        "어깨가 우람했다."
+    )
+
+    study_word = next(
+        item for item in results
+        if item["word"] == "우람하다"
+    )
+
+    definitions = study_word["definitions"]
+
+    assert len(definitions) >= 1
+    assert definitions[0]["english_word"] == "bulky; brawny"
+    assert (
+        definitions[0]["english_definition"]
+        == "Having a large build or size and strength."
+    )

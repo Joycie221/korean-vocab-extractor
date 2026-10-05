@@ -1,3 +1,4 @@
+from dictionary import lookup_dictionary
 from collections import Counter
 from flask import Flask, render_template, request
 from kiwipiepy import Kiwi
@@ -129,7 +130,7 @@ def get_surface_form(sentence_text, token):
     return surface_form.rstrip(".,!?…“”‘’")
 
 def extract_vocabulary_with_context(text):
-    """Extract vocabulary with original forms and sentence context."""
+    """Extract vocabulary with original forms, sentence context, and definitions."""
 
     results = {}
 
@@ -144,19 +145,12 @@ def extract_vocabulary_with_context(text):
         while index < len(tokens):
             token = tokens[index]
 
-            # Reconstruct words formed with derivational suffixes.
-            # Examples:
-            # 공부 + 하/XSV -> 공부하다 (Verb)
-            # 상속 + 되/XSV -> 상속되다 (Verb)
-            # 우람 + 하/XSA -> 우람하다 (Adjective)
             derived_word = reconstruct_derived_word(tokens, index)
 
             if derived_word:
                 word = derived_word["word"]
                 part_of_speech = derived_word["part_of_speech"]
 
-                # Preserve the form exactly as it appeared
-                # in the original sentence.
                 surface_form = get_surface_form(
                     sentence_text,
                     token
@@ -168,6 +162,10 @@ def extract_vocabulary_with_context(text):
                         "part_of_speech": part_of_speech,
                         "frequency": 0,
                         "occurrences": [],
+                        "definitions": lookup_dictionary(
+                            word,
+                            part_of_speech
+                        ),
                     }
 
                 results[word]["frequency"] += 1
@@ -177,12 +175,9 @@ def extract_vocabulary_with_context(text):
                     "sentence": sentence_text,
                 })
 
-                # Skip both pieces because they have already
-                # been reconstructed into one vocabulary item.
                 index += 2
                 continue
 
-            # Handle ordinary vocabulary tokens.
             if token.tag in VOCABULARY_TAGS:
                 word = to_dictionary_form(
                     token.form,
@@ -202,6 +197,10 @@ def extract_vocabulary_with_context(text):
                         "part_of_speech": part_of_speech,
                         "frequency": 0,
                         "occurrences": [],
+                        "definitions": lookup_dictionary(
+                            word,
+                            part_of_speech
+                        ),
                     }
 
                 results[word]["frequency"] += 1
